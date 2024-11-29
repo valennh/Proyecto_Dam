@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "291936683820",
+    "project_id": "cert3-dam",
+    "storage_bucket": "cert3-dam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291936683820:android:8f320a91a8fb584e808e89",
+        "android_client_info": {
+          "package_name": "com.company.cert3_dam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmAuP0WKMaIHx5gXUB31lAMVuQPxkIQxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291936683820:android:01a00956cf7e65ef808e89",
+        "android_client_info": {
+          "package_name": "com.example.cert3_dam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmAuP0WKMaIHx5gXUB31lAMVuQPxkIQxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
