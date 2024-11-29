@@ -1,5 +1,6 @@
 import 'package:cert3_dam/services/fb_service.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NuevaRecetaPage extends StatefulWidget {
   const NuevaRecetaPage({super.key});
@@ -15,7 +16,8 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
   TextEditingController instCtrl = TextEditingController();
   TextEditingController fotoCtrl = TextEditingController();
   TextEditingController autorCtrl = TextEditingController();
-  TextEditingController catCtrl = TextEditingController();
+  String categoriaSeleccioanda = '';
+  String fotoSeleccionada = '';
 
   //se debe agregar campo de categoria (comboBox), yo por mientras le puse un Texteditingcontroller para probar si estaba funcionando bien,
   //OJO el valor que devuelve el combobox DEBE ser string
@@ -93,18 +95,34 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: TextFormField(
-                        validator: (foto) {
-                          if (foto!.isEmpty) {
-                            return 'La foto es requerida';
+                      child: StreamBuilder(
+                        stream: FbService().fotos(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                            return Text('Cargando fotos...');
                           }
-                          return null;
+
+                          var fotos = snapshot.data!.docs;
+                          return DropdownButtonFormField<String>(
+                            decoration: InputDecoration(labelText: 'Seleccione foto'),
+                            value: null,
+                            onChanged: (value) {
+                              fotoSeleccionada = value!;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Seleccione foto';
+                              }
+                              return null;
+                            },
+                            items: fotos.map<DropdownMenuItem<String>>((foto) {
+                              return DropdownMenuItem<String>(
+                                child: Text(foto['nombre']),
+                                value: foto['foto'],
+                              );
+                            }).toList(),
+                          );
                         },
-                        controller: fotoCtrl,
-                        decoration: InputDecoration(
-                          labelText:
-                              'Foto refencial del platillo (dejar ruta asset)',
-                        ),
                       ),
                     ),
                     Container(
@@ -114,52 +132,44 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(5),
                       ),
-                      child: TextFormField(
-                        validator: (autor) {
-                          if (autor!.isEmpty) {
-                            return 'El autor es requerido';
+                      child: StreamBuilder(
+                        stream: FbService().categorias(),
+                        builder: (context, AsyncSnapshot snapshot) {
+                          if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                            return Text('Cargando categorias...');
                           }
-                          return null;
+
+                          var categorias = snapshot.data!.docs;
+                          return DropdownButtonFormField<String>(
+                            decoration: InputDecoration(labelText: 'Seleccione categoria'),
+                            value: null,
+                            onChanged: (value) {
+                              categoriaSeleccioanda = value!;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Seleccione categoria';
+                              }
+                              return null;
+                            },
+                            items: categorias.map<DropdownMenuItem<String>>((categoria) {
+                              return DropdownMenuItem<String>(
+                                child: Text(categoria['preparacion']),
+                                value: categoria['preparacion'],
+                              );
+                            }).toList(),
+                          );
                         },
-                        controller: autorCtrl,
-                        decoration: InputDecoration(
-                          labelText: 'Autor de la receta',
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: TextFormField(
-                        validator: (cat) {
-                          if (cat!.isEmpty) {
-                            return 'La categoria es requerida';
-                          }
-                          return null;
-                        },
-                        controller: catCtrl,
-                        decoration: InputDecoration(
-                          labelText: 'Categoria',
-                        ),
                       ),
                     ),
                     FilledButton(
                         onPressed: () {
+                          User? user = FirebaseAuth.instance.currentUser;
+                          String userName = user!.displayName ?? 'No name';
+
                           // form ya validado
                           if (formKey.currentState!.validate()) {
-                            FbService()
-                                .nuevaReceta(
-                              nombreCtrl.text.trim(),
-                              instCtrl.text.trim(),
-                              fotoCtrl.text.trim(),
-                              autorCtrl.text.trim(),
-                              catCtrl.text.trim(),
-                            )
-                                .then((_) {
+                            FbService().nuevaReceta(nombreCtrl.text.trim(), instCtrl.text.trim(), fotoSeleccionada, userName, categoriaSeleccioanda).then((_) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Receta agregada exitosamente'),
@@ -173,8 +183,7 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                             }).catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content:
-                                      Text('Error al agregar receta: $error'),
+                                  content: Text('Error al agregar receta: $error'),
                                   backgroundColor: Colors.red,
                                 ),
                               );

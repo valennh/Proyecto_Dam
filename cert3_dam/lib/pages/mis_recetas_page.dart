@@ -27,10 +27,9 @@ class MisRecetasPage extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(10),
           child: StreamBuilder(
-            stream: FbService().recetas(),
+            stream: FbService().recetasPorAutor(),
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData ||
-                  snapshot.connectionState == ConnectionState.waiting) {
+              if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               }
               return ListView.builder(
@@ -38,24 +37,21 @@ class MisRecetasPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var receta = snapshot.data!.docs[index];
                   return Slidable(
-                      startActionPane:
-                          ActionPane(motion: ScrollMotion(), children: [
+                      startActionPane: ActionPane(motion: ScrollMotion(), children: [
                         SlidableAction(
                           onPressed: (_) {
                             FbService().borrarReceta(receta.id).then((_) {
                               // Usar directamente el ScaffoldMessenger desde el contexto del Scaffold
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content:
-                                      Text('Receta eliminada exitosamente'),
+                                  content: Text('Receta eliminada exitosamente'),
                                   backgroundColor: Colors.green,
                                 ),
                               );
                             }).catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
-                                      'Error al eliminar la receta: $error'),
+                                  content: Text('Error al eliminar la receta: $error'),
                                   backgroundColor: Colors.red,
                                 ),
                               );
