@@ -98,13 +98,16 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                       child: StreamBuilder(
                         stream: FbService().fotos(),
                         builder: (context, AsyncSnapshot snapshot) {
-                          if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                          if (!snapshot.hasData ||
+                              snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                             return Text('Cargando fotos...');
                           }
 
                           var fotos = snapshot.data!.docs;
                           return DropdownButtonFormField<String>(
-                            decoration: InputDecoration(labelText: 'Seleccione foto'),
+                            decoration:
+                                InputDecoration(labelText: 'Seleccione foto'),
                             value: null,
                             onChanged: (value) {
                               fotoSeleccionada = value!;
@@ -135,13 +138,16 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                       child: StreamBuilder(
                         stream: FbService().categorias(),
                         builder: (context, AsyncSnapshot snapshot) {
-                          if (!snapshot.hasData || snapshot.connectionState == ConnectionState.waiting) {
+                          if (!snapshot.hasData ||
+                              snapshot.connectionState ==
+                                  ConnectionState.waiting) {
                             return Text('Cargando categorias...');
                           }
 
                           var categorias = snapshot.data!.docs;
                           return DropdownButtonFormField<String>(
-                            decoration: InputDecoration(labelText: 'Seleccione categoria'),
+                            decoration: InputDecoration(
+                                labelText: 'Seleccione categoria'),
                             value: null,
                             onChanged: (value) {
                               categoriaSeleccioanda = value!;
@@ -152,7 +158,8 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                               }
                               return null;
                             },
-                            items: categorias.map<DropdownMenuItem<String>>((categoria) {
+                            items: categorias
+                                .map<DropdownMenuItem<String>>((categoria) {
                               return DropdownMenuItem<String>(
                                 child: Text(categoria['preparacion']),
                                 value: categoria['preparacion'],
@@ -169,7 +176,14 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
 
                           // form ya validado
                           if (formKey.currentState!.validate()) {
-                            FbService().nuevaReceta(nombreCtrl.text.trim(), instCtrl.text.trim(), fotoSeleccionada, userName, categoriaSeleccioanda).then((_) {
+                            FbService()
+                                .nuevaReceta(
+                                    nombreCtrl.text.trim(),
+                                    instCtrl.text.trim(),
+                                    fotoSeleccionada,
+                                    userName,
+                                    categoriaSeleccioanda)
+                                .then((_) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Receta agregada exitosamente'),
@@ -179,11 +193,11 @@ class _NuevaRecetaPageState extends State<NuevaRecetaPage> {
                               nombreCtrl.clear();
                               instCtrl.clear();
                               fotoCtrl.clear();
-                              autorCtrl.clear();
                             }).catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Error al agregar receta: $error'),
+                                  content:
+                                      Text('Error al agregar receta: $error'),
                                   backgroundColor: Colors.red,
                                 ),
                               );

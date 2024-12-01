@@ -23,9 +23,11 @@ class DetalleRecetaPage extends StatelessWidget {
               height: double.infinity,
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(8),
-            child: DetalleRecetaTile(recetaId: recetaId),
+          SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(8),
+              child: DetalleRecetaTile(recetaId: recetaId),
+            ),
           )
         ],
       ),

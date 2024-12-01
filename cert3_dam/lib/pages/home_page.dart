@@ -60,8 +60,26 @@ class HomePage extends StatelessWidget {
           child: ListView(
             children: [
               DrawerHeader(
-                  decoration: BoxDecoration(color: Colors.pink),
-                  child: Text('Titulo')),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.pink.shade200, Colors.amber])),
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: Container(
+                          child: Image.asset('assets/images/mystia11.webp'),
+                        )),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Menú principal',
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )
+                      ],
+                    ),
+                  )),
               TextButton(
                   onPressed: () {
                     Navigator.push(
